@@ -12,6 +12,8 @@
 
 #include "led.h"
 #include "Sequences.h"
+#include <type_traits>
+
 extern LedRGBwPower_t Led;
 
 cc1101_t CC(CC_Setup0);
@@ -34,6 +36,22 @@ cc1101_t CC(CC_Setup0);
 
 rLevel1_t Radio;
 
+bool RxData_t::ProcessAndCheck()
+{
+	bool result = false;
+
+	if (Cnt >= 3L) {
+		Summ /= Cnt;
+		if(Summ >= Threshold)
+			result = true;
+	}
+
+	Cnt = 0;
+	Summ = 0;
+
+	return result;
+}
+
 #if 1 // ================================ Task =================================
 static THD_WORKING_AREA(warLvl1Thread, 256);
 __noreturn
@@ -54,16 +72,20 @@ static void rLvl1Thread(void *arg) {
                 Radio.RxData[Indx].Summ += Rssi;
                 Radio.RxData[Indx].Threshold = RxPkt.RssiThr;
                 Radio.RxData[Indx].Dmg = RxPkt.Value;
+            } else if (RxPkt.From == DIAGNOSTIC_SENDER_ID) {
+            	Radio.diagCmd = static_cast<DiagnosticCommand>(RxPkt.Value);
+            	if (RxPkt.Value != static_cast<int8_t>(Radio.diagCmd))
+            		Radio.diagCmd = DiagnosticCommand::none;
             }
         }
     } // while true
 }
 #endif // task
 
-void rLevel1_t::TryToSleep(uint32_t SleepDuration) {
-    if(SleepDuration >= MIN_SLEEP_DURATION_MS) CC.EnterPwrDown();
-    chThdSleepMilliseconds(SleepDuration);
-}
+//void rLevel1_t::TryToSleep(uint32_t SleepDuration) {
+//    if(SleepDuration >= MIN_SLEEP_DURATION_MS) CC.EnterPwrDown();
+//    chThdSleepMilliseconds(SleepDuration);
+//}
 
 #if 1 // ============================
 uint8_t rLevel1_t::Init() {
@@ -76,7 +98,7 @@ uint8_t rLevel1_t::Init() {
         RxData[i].Cnt = 0;
         RxData[i].Summ = 0;
     }
-
+    diagCmd = DiagnosticCommand::none;
     RMsgQ.Init();
     if(CC.Init() == retvOk) {
         CC.SetTxPower(CC_PwrMinus20dBm);

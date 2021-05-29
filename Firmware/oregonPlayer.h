@@ -87,7 +87,9 @@ IMMUNE_SIG,
 NOT_IMMUNE_SIG,
 BLESSED_SIG,
 
-LAST_USER_SIG
+LAST_USER_SIG,
+
+PILL_DIAGNOSTIC = 1001
 };
 extern QHsm * const the_oregonPlayer; /* opaque pointer to the oregonPlayer HSM */
 

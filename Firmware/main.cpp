@@ -3,6 +3,8 @@
 #include "vibro.h"
 #include "beeper.h"
 #include "Sequences.h"
+#include "glue.h"
+#include "diagnostic.h"
 #include "radio_lvl1.h"
 #include "kl_i2c.h"
 #include "kl_lib.h"
@@ -62,6 +64,8 @@ static TmrKL_t TmrEverySecond {TIME_MS2I(1000), evtIdEverySecond, tktPeriodic};
 uint32_t TimeS = 0;
 #endif
 
+void runDiagnostic();
+
 int main(void) {
     // ==== Init Vcore & clock system ====
     SetupVCore(vcore1V5);
@@ -100,8 +104,11 @@ int main(void) {
     TmrEverySecond.StartOrRestart();
 
     // ==== Radio ====
-    if(Radio.Init() == retvOk) Led.StartOrRestart(lsqStart);
-    else Led.StartOrRestart(lsqFailure);
+    if(Radio.Init() == retvOk)
+    	Led.StartOrRestart(lsqStart);
+    else
+    	Led.StartOrRestart(lsqFailure);
+
 #if VIBRO_ENABLED
     VibroMotor.StartOrRestart(vsqBrrBrr);
 #endif
@@ -164,7 +171,7 @@ void ITask() {
                 SendEventSMPill(PILL_ANY_SIG, 0, 0);
                 uint32_t PillId;
                 PillId = PillMgr.Pill.DWord32;
-                switch(PillMgr.Pill.DWord32) {
+                switch(PillId) {
                     case 0: SendEventSMPill(PILL_RESET_SIG, 0, 0); break;
                     case 1: SendEventSMPill(PILL_ANTIRAD_SIG, 0, 0); break;
                     case 2: SendEventSMPill(PILL_RAD_X_SIG, 0, 0); break;
@@ -177,6 +184,9 @@ void ITask() {
                     default: break;
                 }
 #endif
+                if (PillId == PILL_DIAGNOSTIC)
+                	runDiagnostic();
+
                 break;
 
             case evtIdPillDisconnected:
@@ -372,3 +382,42 @@ uint8_t ISetID(int32_t NewID) {
     }
 }
 #endif
+
+void blockingFlash(uint8_t R, uint8_t G, uint8_t B, uint32_t Duration_ms)
+{
+	Flash(R, G, B, Duration_ms);
+    chThdSleepMilliseconds(Duration_ms + 1);
+}
+
+void blockingBeep(uint32_t Duration_ms)
+{
+	BeepForPeriod(Duration_ms);
+	chThdSleepMilliseconds(Duration_ms + 1);
+}
+
+void runDiagnostic()
+{
+	/// erase diagCmd, check it later, meanwhile flash LED and buzzer
+	Radio.diagCmd = DiagnosticCommand::none;
+
+	blockingFlash(255, 0, 0, DIAGNOSTIC_FLASH_DURATION);
+	blockingFlash(0, 255, 0, DIAGNOSTIC_FLASH_DURATION);
+	blockingFlash(0, 0, 255, DIAGNOSTIC_FLASH_DURATION);
+	blockingBeep(DIAGNOSTIC_FLASH_DURATION);
+
+	if (Radio.diagCmd == DiagnosticCommand::requestFromDiagServer) {
+		blockingFlash(0, 255, 0, RADIO_CMD_RECEIVED_DURATION);
+		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
+		blockingFlash(0, 255, 0, RADIO_CMD_RECEIVED_DURATION);
+		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
+		blockingFlash(0, 255, 0, RADIO_CMD_RECEIVED_DURATION);
+		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
+	} else {
+		blockingFlash(255, 0, 0, RADIO_CMD_RECEIVED_DURATION * 2);
+		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
+		blockingFlash(255, 0, 0, RADIO_CMD_RECEIVED_DURATION * 2);
+		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
+		blockingFlash(255, 0, 0, RADIO_CMD_RECEIVED_DURATION * 2);
+		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
+	}
+}

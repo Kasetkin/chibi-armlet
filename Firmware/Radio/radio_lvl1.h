@@ -176,21 +176,25 @@ public:
     int32_t Summ;
     int32_t Threshold;
     int32_t Dmg;
-    bool ProcessAndCheck() {
-        bool Rslt = false;
-        if(Cnt >= 3L) {
-            Summ /= Cnt;
-            if(Summ >= Threshold) Rslt = true;
-        }
-        Cnt = 0;
-        Summ = 0;
-        return Rslt;
-    }
+
+    bool ProcessAndCheck();
 };
 
 #define LUSTRA_CNT      100
 #define LUSTRA_MIN_ID   1000
 #define LUSTRA_MAX_ID   (LUSTRA_MIN_ID + LUSTRA_CNT - 1)
+
+
+constexpr uint16_t DIAGNOSTIC_SENDER_ID = 2000;
+
+enum class DiagnosticCommand : int8_t {
+	error = 0,
+	none = 1,
+	requestFromPlayer = 2,
+	answerFromPlayer = 3,
+	requestFromDiagServer = 4,
+	answerFromDiagServer = 5
+};
 
 class rLevel1_t {
 public:
@@ -199,17 +203,18 @@ public:
 //    bool MustTx = false;
     int8_t Rssi;
     RxData_t RxData[LUSTRA_CNT];
+    DiagnosticCommand diagCmd;
     uint8_t Init();
     // Inner use
-    void TryToSleep(uint32_t SleepDuration);
-    void TryToReceive(uint32_t RxDuration);
+    //void TryToSleep(uint32_t SleepDuration);
+    //void TryToReceive(uint32_t RxDuration);
     // Different modes of operation
-    void TaskTransmitter();
-    void TaskReceiverManyByID();
-    void TaskReceiverManyByChannel();
-    void TaskReceiverSingle();
-    void TaskFeelEachOtherSingle();
-    void TaskFeelEachOtherMany();
+    //void TaskTransmitter();
+    //void TaskReceiverManyByID();
+    //void TaskReceiverManyByChannel();
+    //void TaskReceiverSingle();
+    //void TaskFeelEachOtherSingle();
+    //void TaskFeelEachOtherMany();
 };
 
 extern rLevel1_t Radio;
