@@ -152,26 +152,26 @@
 								<option id="com.atollic.truestudio.common_options.target.fpu.1147280363" name="Floating point" superClass="com.atollic.truestudio.common_options.target.fpu" useByScannerDiscovery="false"/>
 								<option id="com.atollic.truestudio.as.symbols.defined.273297341" name="Defined symbols" superClass="com.atollic.truestudio.as.symbols.defined" useByScannerDiscovery="false"/>
 								<option id="com.atollic.truestudio.as.general.incpath.353650606" name="Include path" superClass="com.atollic.truestudio.as.general.incpath" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value=".././"/>
-									<listOptionValue builtIn="false" value="../os"/>
-									<listOptionValue builtIn="false" value="../os/hal"/>
-									<listOptionValue builtIn="false" value="../os/include"/>
-									<listOptionValue builtIn="false" value="../os/stm32l15x"/>
-									<listOptionValue builtIn="false" value="../kl_lib"/>
-									<listOptionValue builtIn="false" value="../Radio"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/kl_lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Radio&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os/stm32L15x&quot;"/>
 								</option>
 								<inputType id="com.atollic.truestudio.as.input.1054866154" name="Input" superClass="com.atollic.truestudio.as.input"/>
 							</tool>
 							<tool id="com.atollic.truestudio.exe.release.toolchain.gcc.970971234" name="C Compiler" superClass="com.atollic.truestudio.exe.release.toolchain.gcc">
 								<option id="com.atollic.truestudio.gcc.symbols.defined.1251765681" name="Defined symbols" superClass="com.atollic.truestudio.gcc.symbols.defined" useByScannerDiscovery="false"/>
 								<option id="com.atollic.truestudio.gcc.directories.select.786338670" name="Include path" superClass="com.atollic.truestudio.gcc.directories.select" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value=".././"/>
-									<listOptionValue builtIn="false" value="../os"/>
-									<listOptionValue builtIn="false" value="../os/hal"/>
-									<listOptionValue builtIn="false" value="../os/include"/>
-									<listOptionValue builtIn="false" value="../os/stm32l15x"/>
-									<listOptionValue builtIn="false" value="../kl_lib"/>
-									<listOptionValue builtIn="false" value="../Radio"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/kl_lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Radio&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os/stm32L15x&quot;"/>
 								</option>
 								<option id="com.atollic.truestudio.common_options.target.endianess.925172049" name="Endianess" superClass="com.atollic.truestudio.common_options.target.endianess" useByScannerDiscovery="false"/>
 								<option id="com.atollic.truestudio.common_options.target.mcpu.1010538283" name="Microcontroller" superClass="com.atollic.truestudio.common_options.target.mcpu" useByScannerDiscovery="false" value="STM32L151C8" valueType="enumerated"/>
@@ -194,14 +194,14 @@
 							<tool id="com.atollic.truestudio.exe.release.toolchain.gpp.24800993" name="C++ Compiler" superClass="com.atollic.truestudio.exe.release.toolchain.gpp">
 								<option id="com.atollic.truestudio.gpp.symbols.defined.2105101121" name="Defined symbols" superClass="com.atollic.truestudio.gpp.symbols.defined" useByScannerDiscovery="false"/>
 								<option id="com.atollic.truestudio.gpp.directories.select.1375716692" name="Include path" superClass="com.atollic.truestudio.gpp.directories.select" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value=".././"/>
-									<listOptionValue builtIn="false" value="../os"/>
-									<listOptionValue builtIn="false" value="../os/hal"/>
-									<listOptionValue builtIn="false" value="../os/include"/>
-									<listOptionValue builtIn="false" value="../os/stm32l15x"/>
-									<listOptionValue builtIn="false" value="../kl_lib"/>
-									<listOptionValue builtIn="false" value="../Radio"/>
-									<listOptionValue builtIn="false" value="../Pill"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/os/stm32L15x&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/kl_lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Radio&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Pill&quot;"/>
 								</option>
 								<option id="com.atollic.truestudio.common_options.target.endianess.48032065" name="Endianess" superClass="com.atollic.truestudio.common_options.target.endianess" useByScannerDiscovery="false"/>
 								<option id="com.atollic.truestudio.common_options.target.mcpu.153188973" name="Microcontroller" superClass="com.atollic.truestudio.common_options.target.mcpu" useByScannerDiscovery="false" value="STM32L151C8" valueType="enumerated"/>
