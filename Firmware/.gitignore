@@ -1,3 +1,4 @@
 /Debug/
 /Release/
 *.code_review_properties
+*.elf.launch
