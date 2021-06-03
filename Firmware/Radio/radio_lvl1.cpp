@@ -35,7 +35,6 @@ cc1101_t CC(CC_Setup0);
 #endif
 
 rLevel1_t Radio;
-bool BlockReceive;
 
 bool RxData_t::ProcessAndCheck()
 {
@@ -59,11 +58,6 @@ __noreturn
 void rLevel1_t::receivePacketsThread(void *arg) {
     chRegSetThreadName("rLvl1");
     while(true) {
-    	if (BlockReceive) {
-    		chThdSleepMilliseconds(10);
-    		continue;
-    	}
-
         int8_t Rssi;
         rPkt_t RxPkt;
         CC.Recalibrate();
@@ -117,20 +111,6 @@ uint8_t rLevel1_t::Init() {
         return retvOk;
     }
     else return retvFail;
-}
-
-void rLevel1_t::transmitDiagnosticRequest()
-{
-	BlockReceive = true;
-	chThdSleepMilliseconds(20);
-
-    rPkt_t diagPacket;
-    diagPacket.From = DIAGNOSTIC_CLIENT_ID;
-    diagPacket.To = DIAGNOSTIC_AUTOSERVER_ID;
-    diagPacket.Value = static_cast<uint16_t>(DiagnosticCommand::requestFromPlayer);
-    CC.Transmit(&diagPacket, RPKT_LEN);
-
-    BlockReceive = false;
 }
 
 #endif

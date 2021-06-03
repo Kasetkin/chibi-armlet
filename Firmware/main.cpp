@@ -412,7 +412,7 @@ void runDiagnostic()
 	blockingFlash(0, 0, 255, DIAGNOSTIC_FLASH_DURATION);
 	blockingBeep(DIAGNOSTIC_FLASH_DURATION);
 
-	Radio.transmitDiagnosticRequest();
+	Radio.diagCmd = DiagnosticCommand::none;
 	chThdSleepMilliseconds(RADIO_ANSWER_TIMEOUT);
 
 	if (Radio.diagCmd == DiagnosticCommand::answerFromDiagServer) {

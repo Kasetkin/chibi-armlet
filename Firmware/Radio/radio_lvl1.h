@@ -203,7 +203,6 @@ public:
 
     uint8_t Init();
 
-    void transmitDiagnosticRequest();
     // Inner use
     //void TryToSleep(uint32_t SleepDuration);
     //void TryToReceive(uint32_t RxDuration);
