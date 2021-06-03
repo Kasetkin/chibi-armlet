@@ -402,6 +402,18 @@ void blockingBeep(uint32_t Duration_ms)
 	chThdSleepMilliseconds(Duration_ms + 1);
 }
 
+void beepShort(size_t repeatCount = 1)
+{
+	blockingBeep(50);
+	chThdSleepMilliseconds(150);
+}
+
+void beepLong(size_t repeatCount = 1)
+{
+	blockingBeep(150);
+	chThdSleepMilliseconds(50);
+}
+
 void runDiagnostic()
 {
 	/// erase diagCmd, check it later, meanwhile flash LED and buzzer
@@ -422,6 +434,7 @@ void runDiagnostic()
 		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
 		blockingFlash(0, 255, 0, RADIO_CMD_RECEIVED_DURATION);
 		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
+		beepLong(10);
 	} else {
 		blockingFlash(255, 0, 0, RADIO_CMD_RECEIVED_DURATION * 2);
 		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
@@ -429,5 +442,8 @@ void runDiagnostic()
 		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
 		blockingFlash(255, 0, 0, RADIO_CMD_RECEIVED_DURATION * 2);
 		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
+		beepShort(3);
+		beepLong(3);
+		beepShort(3);
 	}
 }
