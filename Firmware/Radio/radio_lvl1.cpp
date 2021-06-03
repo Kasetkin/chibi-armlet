@@ -93,8 +93,6 @@ uint8_t rLevel1_t::Init() {
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull);
     PinSetupOut(DBG_GPIO2, DBG_PIN2, omPushPull);
 #endif
-    BlockReceive = false;
-
     for(int i=0; i<LUSTRA_CNT; i++) {
         RxData[i].Cnt = 0;
         RxData[i].Summ = 0;
