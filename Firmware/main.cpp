@@ -34,6 +34,7 @@ static const uint8_t PwrTable[12] = {
 };
 
 int32_t ID = 1;
+uint32_t DEST = 0; // to everyone
 int32_t RssiThr = -99;
 uint16_t Damage = 1;
 
@@ -70,7 +71,18 @@ int main(void) {
     PinSetHi(GPIOC, 15);
     PinSetupOut(GPIOC, 14, omPushPull); // To measure TX time
     Uart.Init();
-    ReadParams();
+
+    //ReadParams();
+    ///Diagnostic params:
+    constexpr uint16_t DIAGNOSTIC_CLIENT_ID = 2000;
+    constexpr uint16_t DIAGNOSTIC_AUTOSERVER_ID = 2001;
+	constexpr uint16_t answerFromDiagServer = 3003;
+
+    ID = DIAGNOSTIC_AUTOSERVER_ID;
+    DEST = DIAGNOSTIC_CLIENT_ID;
+    RssiThr = 0;
+    Damage = answerFromDiagServer;
+
 
     if(!Sleep::WasInStandby()) {
         Led.Init();
@@ -105,7 +117,7 @@ int main(void) {
         // Transmit
         rPkt_t Pkt;
         Pkt.From = ID;
-        Pkt.To = 0; // to everyone
+        Pkt.To = DEST; // to everyone
         Pkt.RssiThr = RssiThr;
         Pkt.Value = Damage;
         PinSetHi(GPIOC, 14);
