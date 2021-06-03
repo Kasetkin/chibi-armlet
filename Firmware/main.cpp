@@ -404,14 +404,18 @@ void blockingBeep(uint32_t Duration_ms)
 
 void beepShort(size_t repeatCount = 1)
 {
-	blockingBeep(50);
-	chThdSleepMilliseconds(150);
+	for (size_t i = 0; i < repeatCount; ++i) {
+		blockingBeep(50);
+		chThdSleepMilliseconds(150);
+	}
 }
 
 void beepLong(size_t repeatCount = 1)
 {
-	blockingBeep(150);
-	chThdSleepMilliseconds(50);
+	for (size_t i = 0; i < repeatCount; ++i) {
+		blockingBeep(150);
+		chThdSleepMilliseconds(50);
+	}
 }
 
 void runDiagnostic()
