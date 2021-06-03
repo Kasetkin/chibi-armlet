@@ -13,6 +13,7 @@
 #include "kl_buf.h"
 #include "uart.h"
 #include "MsgQ.h"
+#include "diagnostic.h"
 
 #if 0 // ========================= Signal levels ===============================
 // Python translation for db
@@ -185,18 +186,12 @@ public:
 #define LUSTRA_MAX_ID   (LUSTRA_MIN_ID + LUSTRA_CNT - 1)
 
 
-constexpr uint16_t DIAGNOSTIC_SENDER_ID = 2000;
-
-enum class DiagnosticCommand : int8_t {
-	error = 0,
-	none = 1,
-	requestFromPlayer = 2,
-	answerFromPlayer = 3,
-	requestFromDiagServer = 4,
-	answerFromDiagServer = 5
-};
-
 class rLevel1_t {
+private:
+	static constexpr uint32_t RECEIVE_PACKET_TIMEOUT_MS = 360;
+	thread_t *m_listenThread = nullptr;
+
+	static void receivePacketsThread(void *arg);
 public:
     EvtMsgQ_t<RMsg_t, R_MSGQ_LEN> RMsgQ;
     rPkt_t PktRx, PktTx;
@@ -204,7 +199,11 @@ public:
     int8_t Rssi;
     RxData_t RxData[LUSTRA_CNT];
     DiagnosticCommand diagCmd;
+
+
     uint8_t Init();
+
+    void transmitDiagnosticRequest();
     // Inner use
     //void TryToSleep(uint32_t SleepDuration);
     //void TryToReceive(uint32_t RxDuration);

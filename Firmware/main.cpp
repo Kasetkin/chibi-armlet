@@ -78,6 +78,10 @@ int main(void) {
     EvtQMain.Init();
 
     // ==== Init hardware ====
+    PinSetupOut(GPIOC, 15, omPushPull); // To measure total ON time
+    PinSetHi(GPIOC, 15);
+    PinSetupOut(GPIOC, 14, omPushPull); // To measure TX time
+
     Uart.Init();
     ReadIDfromEE();
     Printf("\r%S %S; ID=%u\r", APP_NAME, XSTRINGIFY(BUILD_TIME), ID);
@@ -167,35 +171,38 @@ void ITask() {
 #if PILL_ENABLED // ==== Pill ====
             case evtIdPillConnected:
                 Printf("Pill: %u\r", PillMgr.Pill.DWord32);
+                {
+                	uint32_t PillId = PillMgr.Pill.DWord32;
 #if STATE_MACHINE_EN
-                SendEventSMPill(PILL_ANY_SIG, 0, 0);
-                uint32_t PillId;
-                PillId = PillMgr.Pill.DWord32;
-                switch(PillId) {
-                    case 0: SendEventSMPill(PILL_RESET_SIG, 0, 0); break;
-                    case 1: SendEventSMPill(PILL_ANTIRAD_SIG, 0, 0); break;
-                    case 2: SendEventSMPill(PILL_RAD_X_SIG, 0, 0); break;
-                    case 3: SendEventSMPill(PILL_HEAL_SIG, 0, 0); break;
-                    case 4: SendEventSMPill(PILL_HEALSTATION_SIG, 0, 0); break;
-                    case 5: SendEventSMPill(PILL_BLESS_SIG, 0, 0); break;
-                    case 6: SendEventSMPill(PILL_CURSE_SIG, 0, 0); break;
-                    case 7: SendEventSMPill(PILL_GHOUL_SIG, 0, 0); break;
-                    case 8: SendEventSMPill(PILL_TEST_SIG, 0, 0); break;
-                    default: break;
-                }
+					SendEventSMPill(PILL_ANY_SIG, 0, 0);
+					switch(PillId) {
+						case 0: SendEventSMPill(PILL_RESET_SIG, 0, 0); break;
+						case 1: SendEventSMPill(PILL_ANTIRAD_SIG, 0, 0); break;
+						case 2: SendEventSMPill(PILL_RAD_X_SIG, 0, 0); break;
+						case 3: SendEventSMPill(PILL_HEAL_SIG, 0, 0); break;
+						case 4: SendEventSMPill(PILL_HEALSTATION_SIG, 0, 0); break;
+						case 5: SendEventSMPill(PILL_BLESS_SIG, 0, 0); break;
+						case 6: SendEventSMPill(PILL_CURSE_SIG, 0, 0); break;
+						case 7: SendEventSMPill(PILL_GHOUL_SIG, 0, 0); break;
+						case 8: SendEventSMPill(PILL_TEST_SIG, 0, 0); break;
+						default: break;
+					}
+
 #endif
                 if (PillId == PILL_DIAGNOSTIC)
                 	runDiagnostic();
-
+                }
                 break;
 
             case evtIdPillDisconnected:
                 Printf("Pill disconn\r");
 #if STATE_MACHINE_EN
-                if (PillId == 7) {
-                	SendEventSMPill(PILL_GHOUL_REMOVED_SIG, 0, 0);
-                } else {
-                    SendEventSMPill(PILL_REMOVED_SIG, 0, 0);
+                {
+                	uint32_t PillId = PillMgr.Pill.DWord32;
+					if (PillId == 7)
+						SendEventSMPill(PILL_GHOUL_REMOVED_SIG, 0, 0);
+					else
+						SendEventSMPill(PILL_REMOVED_SIG, 0, 0);
                 }
 #endif
                 break;
@@ -405,7 +412,10 @@ void runDiagnostic()
 	blockingFlash(0, 0, 255, DIAGNOSTIC_FLASH_DURATION);
 	blockingBeep(DIAGNOSTIC_FLASH_DURATION);
 
-	if (Radio.diagCmd == DiagnosticCommand::requestFromDiagServer) {
+	Radio.transmitDiagnosticRequest();
+	chThdSleepMilliseconds(RADIO_ANSWER_TIMEOUT);
+
+	if (Radio.diagCmd == DiagnosticCommand::answerFromDiagServer) {
 		blockingFlash(0, 255, 0, RADIO_CMD_RECEIVED_DURATION);
 		blockingFlash(0, 4, 0, RADIO_CMD_RECEIVED_DURATION);
 		blockingFlash(0, 255, 0, RADIO_CMD_RECEIVED_DURATION);

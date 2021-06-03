@@ -12,7 +12,10 @@
 
 extern cc1101_t CC;
 
-void CCIrqHandler() { CC.IIrqHandler(); }
+void CCIrqHandler()
+{
+	CC.IIrqHandler();
+}
 
 uint8_t cc1101_t::Init() {
     // ==== GPIO ====

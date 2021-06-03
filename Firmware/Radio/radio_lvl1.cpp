@@ -35,6 +35,7 @@ cc1101_t CC(CC_Setup0);
 #endif
 
 rLevel1_t Radio;
+bool BlockReceive;
 
 bool RxData_t::ProcessAndCheck()
 {
@@ -55,13 +56,18 @@ bool RxData_t::ProcessAndCheck()
 #if 1 // ================================ Task =================================
 static THD_WORKING_AREA(warLvl1Thread, 256);
 __noreturn
-static void rLvl1Thread(void *arg) {
+void rLevel1_t::receivePacketsThread(void *arg) {
     chRegSetThreadName("rLvl1");
     while(true) {
+    	if (BlockReceive) {
+    		chThdSleepMilliseconds(10);
+    		continue;
+    	}
+
         int8_t Rssi;
         rPkt_t RxPkt;
         CC.Recalibrate();
-        uint8_t RxRslt = CC.Receive(360, &RxPkt, RPKT_LEN, &Rssi);
+        uint8_t RxRslt = CC.Receive(RECEIVE_PACKET_TIMEOUT_MS, &RxPkt, RPKT_LEN, &Rssi);
         if(RxRslt == retvOk) {
             Printf("%u: Thr: %d; Dmg: %u; Rssi: %d\r", RxPkt.From, RxPkt.RssiThr, RxPkt.Value, Rssi);
             // Damage pkt from lustra
@@ -72,9 +78,9 @@ static void rLvl1Thread(void *arg) {
                 Radio.RxData[Indx].Summ += Rssi;
                 Radio.RxData[Indx].Threshold = RxPkt.RssiThr;
                 Radio.RxData[Indx].Dmg = RxPkt.Value;
-            } else if (RxPkt.From == DIAGNOSTIC_SENDER_ID) {
+            } else if (RxPkt.From == DIAGNOSTIC_AUTOSERVER_ID) { /// answer from auto-diagnostic server
             	Radio.diagCmd = static_cast<DiagnosticCommand>(RxPkt.Value);
-            	if (RxPkt.Value != static_cast<int8_t>(Radio.diagCmd))
+            	if (RxPkt.Value != static_cast<uint16_t>(Radio.diagCmd))
             		Radio.diagCmd = DiagnosticCommand::none;
             }
         }
@@ -93,6 +99,7 @@ uint8_t rLevel1_t::Init() {
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull);
     PinSetupOut(DBG_GPIO2, DBG_PIN2, omPushPull);
 #endif
+    BlockReceive = false;
 
     for(int i=0; i<LUSTRA_CNT; i++) {
         RxData[i].Cnt = 0;
@@ -106,9 +113,24 @@ uint8_t rLevel1_t::Init() {
         CC.SetChannel(0);
 //        CC.EnterPwrDown();
         // Thread
-        chThdCreateStatic(warLvl1Thread, sizeof(warLvl1Thread), HIGHPRIO, (tfunc_t)rLvl1Thread, NULL);
+        m_listenThread = chThdCreateStatic(warLvl1Thread, sizeof(warLvl1Thread), HIGHPRIO, (tfunc_t)receivePacketsThread, NULL);
         return retvOk;
     }
     else return retvFail;
 }
+
+void rLevel1_t::transmitDiagnosticRequest()
+{
+	BlockReceive = true;
+	chThdSleepMilliseconds(20);
+
+    rPkt_t diagPacket;
+    diagPacket.From = DIAGNOSTIC_CLIENT_ID;
+    diagPacket.To = DIAGNOSTIC_AUTOSERVER_ID;
+    diagPacket.Value = static_cast<uint16_t>(DiagnosticCommand::requestFromPlayer);
+    CC.Transmit(&diagPacket, RPKT_LEN);
+
+    BlockReceive = false;
+}
+
 #endif
