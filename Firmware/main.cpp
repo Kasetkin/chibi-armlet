@@ -14,7 +14,7 @@
 #include "MsgQ.h"
 #include "main.h"
 
-#define STATE_MACHINE_EN    FALSE
+#define STATE_MACHINE_EN    TRUE
 
 #include "oregonPill.h"
 #include "oregonPlayer.h"
