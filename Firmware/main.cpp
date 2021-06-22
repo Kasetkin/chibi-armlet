@@ -5,6 +5,7 @@
 #include "Sequences.h"
 #include "glue.h"
 #include "diagnostic.h"
+#include "detector.h"
 #include "radio_lvl1.h"
 #include "kl_i2c.h"
 #include "kl_lib.h"
@@ -13,12 +14,14 @@
 #include "MsgQ.h"
 #include "main.h"
 
-#define STATE_MACHINE_EN    TRUE
+#define STATE_MACHINE_EN    FALSE
+
+#include "oregonPill.h"
+#include "oregonPlayer.h"
 
 #if STATE_MACHINE_EN
 #include "qhsm.h"
 #include "eventHandlers.h"
-#include "oregonPill.h"
 #endif
 
 #if 1 // ======================== Variables and defines ========================
@@ -65,6 +68,8 @@ uint32_t TimeS = 0;
 #endif
 
 void runDiagnostic();
+void detectorSignal();
+
 
 int main(void) {
     // ==== Init Vcore & clock system ====
@@ -151,6 +156,7 @@ void ITask() {
 #if STATE_MACHINE_EN
                         SendEventSMPlayer(RAD_RCVD_SIG, (i+LUSTRA_MIN_ID), Radio.RxData[i].Dmg);
 #endif
+                        detectorSignal();
                     }
                 }
                 break;
@@ -189,8 +195,8 @@ void ITask() {
 					}
 
 #endif
-                if (PillId == PILL_DIAGNOSTIC)
-                	runDiagnostic();
+					if (PillId == PILL_DIAGNOSTIC)
+						runDiagnostic();
                 }
                 break;
 
@@ -337,7 +343,9 @@ void OnCmd(Shell_t *PShell) {
     }
 
     else if(PCmd->NameIs("Rst")) {
+#if STATE_MACHINE_EN
         SendEventSMPill(PILL_RESET_SIG, 0, 0);
+#endif
         PShell->Ack(retvOk);
     }
 
@@ -450,4 +458,10 @@ void runDiagnostic()
 		beepLong(3);
 		beepShort(3);
 	}
+}
+
+void detectorSignal()
+{
+	blockingFlash(0, 0, 255, DETECT_FLASH_DURATION);
+	blockingBeep(DETECT_FLASH_DURATION);
 }
