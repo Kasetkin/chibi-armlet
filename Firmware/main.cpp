@@ -72,17 +72,16 @@ int main(void) {
     PinSetupOut(GPIOC, 14, omPushPull); // To measure TX time
     Uart.Init();
 
-    //ReadParams();
-    ///Diagnostic params:
-    constexpr uint16_t DIAGNOSTIC_CLIENT_ID = 2000;
-    constexpr uint16_t DIAGNOSTIC_AUTOSERVER_ID = 2001;
-	constexpr uint16_t answerFromDiagServer = 3003;
+    ReadParams();
+//   /// Diagnostic params:
+//  constexpr uint16_t DIAGNOSTIC_CLIENT_ID = 2000;
+//  constexpr uint16_t DIAGNOSTIC_AUTOSERVER_ID = 2001;
+//	constexpr uint16_t answerFromDiagServer = 3003;
 
-    ID = DIAGNOSTIC_AUTOSERVER_ID;
-    DEST = DIAGNOSTIC_CLIENT_ID;
-    RssiThr = 0;
-    Damage = answerFromDiagServer;
-
+/// lustra test parameters
+    ID = 1099;
+    RssiThr = -40;
+    Damage = 1000;
 
     if(!Sleep::WasInStandby()) {
         Led.Init();
