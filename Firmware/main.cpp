@@ -463,5 +463,5 @@ void runDiagnostic()
 void detectorSignal()
 {
 	blockingFlash(0, 0, 255, DETECT_FLASH_DURATION);
-	blockingBeep(DETECT_FLASH_DURATION);
+//	blockingBeep(DETECT_FLASH_DURATION);
 }
