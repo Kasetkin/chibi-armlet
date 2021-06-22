@@ -79,9 +79,9 @@ int main(void) {
 //	constexpr uint16_t answerFromDiagServer = 3003;
 
 /// lustra test parameters
-    ID = 1099;
-    RssiThr = -48;
-    Damage = 1000;
+    ID = 1090; 			// factory settings
+    RssiThr = -59;		// factory settings
+    Damage = 23;		// factory settings
 
     if(!Sleep::WasInStandby()) {
         Led.Init();
