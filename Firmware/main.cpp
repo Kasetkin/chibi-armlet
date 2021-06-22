@@ -80,7 +80,7 @@ int main(void) {
 
 /// lustra test parameters
     ID = 1099;
-    RssiThr = -40;
+    RssiThr = -48;
     Damage = 1000;
 
     if(!Sleep::WasInStandby()) {
