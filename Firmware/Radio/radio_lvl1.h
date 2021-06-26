@@ -39,6 +39,22 @@ struct rPkt_t {
 
 #endif
 
+
+const uint8_t PwrTable[12] = {
+        CC_PwrMinus30dBm, // 0
+        CC_PwrMinus27dBm, // 1
+        CC_PwrMinus25dBm, // 2
+        CC_PwrMinus20dBm, // 3
+        CC_PwrMinus15dBm, // 4
+        CC_PwrMinus10dBm, // 5
+        CC_PwrMinus6dBm,  // 6
+        CC_Pwr0dBm,       // 7
+        CC_PwrPlus5dBm,   // 8
+        CC_PwrPlus7dBm,   // 9
+        CC_PwrPlus10dBm,  // 10
+        CC_PwrPlus12dBm   // 11
+};
+
 class rLevel1_t {
 public:
     uint8_t Init();

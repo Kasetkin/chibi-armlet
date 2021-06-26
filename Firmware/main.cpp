@@ -17,26 +17,12 @@ EvtMsgQ_t<EvtMsg_t, MAIN_EVT_Q_LEN> EvtQMain;
 static const UartParams_t CmdUartParams(115200, CMD_UART_PARAMS);
 CmdUart_t Uart{&CmdUartParams};
 
-__unused
-static const uint8_t PwrTable[12] = {
-        CC_PwrMinus30dBm, // 0
-        CC_PwrMinus27dBm, // 1
-        CC_PwrMinus25dBm, // 2
-        CC_PwrMinus20dBm, // 3
-        CC_PwrMinus15dBm, // 4
-        CC_PwrMinus10dBm, // 5
-        CC_PwrMinus6dBm,  // 6
-        CC_Pwr0dBm,       // 7
-        CC_PwrPlus5dBm,   // 8
-        CC_PwrPlus7dBm,   // 9
-        CC_PwrPlus10dBm,  // 10
-        CC_PwrPlus12dBm   // 11
-};
+constexpr uint8_t LUSTRA_POWER = CC_PwrPlus5dBm;
 
-int32_t ID = 1;
-uint32_t DEST = 0; // to everyone
-int32_t RssiThr = -99;
-uint16_t Damage = 1;
+constexpr uint16_t ID = 1031; 			// factory settings
+constexpr int32_t  RssiThr = -65;		// factory settings
+constexpr uint16_t Damage = 45;		// factory settings
+constexpr uint16_t DEST = 0; // to everyone
 
 // EEAddresses
 #define EE_ADDR_ID          0
@@ -72,16 +58,12 @@ int main(void) {
     PinSetupOut(GPIOC, 14, omPushPull); // To measure TX time
     Uart.Init();
 
-    ReadParams();
+//    ReadParams();
 //   /// Diagnostic params:
 //  constexpr uint16_t DIAGNOSTIC_CLIENT_ID = 2000;
 //  constexpr uint16_t DIAGNOSTIC_AUTOSERVER_ID = 2001;
 //	constexpr uint16_t answerFromDiagServer = 3003;
 
-/// lustra test parameters
-    ID = 1090; 			// factory settings
-    RssiThr = -59;		// factory settings
-    Damage = 23;		// factory settings
 
     if(!Sleep::WasInStandby()) {
         Led.Init();
@@ -110,7 +92,7 @@ int main(void) {
             Iwdg::Reload();
         }
         // Setup CC
-        CC.SetTxPower(CC_PwrPlus5dBm);
+        CC.SetTxPower(LUSTRA_POWER);
         CC.SetPktSize(RPKT_LEN);
         CC.SetChannel(0);
         // Transmit
@@ -210,46 +192,46 @@ void OnCmd(Cmd_t *PCmd) {
 }
 #endif
 
-#if 1 // ============================ Save/Load Params =========================
+//#if 1 // ============================ Save/Load Params =========================
 void ReadParams() {
-    ID = EE::Read32(EE_ADDR_ID);
-    RssiThr = EE::Read32(EE_ADDR_THRESHOLD);
-    Damage = EE::Read32(EE_ADDR_DAMAGE);
+//    ID = EE::Read32(EE_ADDR_ID);
+//    RssiThr = EE::Read32(EE_ADDR_THRESHOLD);
+//    Damage = EE::Read32(EE_ADDR_DAMAGE);
 }
-
+//
 uint8_t SetID(int32_t NewID) {
-    uint8_t rslt = EE::Write32(EE_ADDR_ID, NewID);
-    if(rslt == retvOk) {
-        ID = NewID;
+//    uint8_t rslt = EE::Write32(EE_ADDR_ID, NewID);
+//    if(rslt == retvOk) {
+//        ID = NewID;
         return retvOk;
-    }
-    else {
-        Printf("EE error: %u\r", rslt);
-        return retvFail;
-    }
+//    }
+//    else {
+//        Printf("EE error: %u\r", rslt);
+//        return retvFail;
+//    }
 }
-
+//
 uint8_t SetThr(int32_t NewThr) {
-    uint8_t rslt = EE::Write32(EE_ADDR_THRESHOLD, NewThr);
-    if(rslt == retvOk) {
-        RssiThr = NewThr;
+//    uint8_t rslt = EE::Write32(EE_ADDR_THRESHOLD, NewThr);
+//    if(rslt == retvOk) {
+//        RssiThr = NewThr;
         return retvOk;
-    }
-    else {
-        Printf("EE error: %u\r", rslt);
-        return retvFail;
-    }
+//    }
+//    else {
+//        Printf("EE error: %u\r", rslt);
+//        return retvFail;
+//    }
 }
-
+//
 uint8_t SetDmg(uint32_t NewDmg) {
-    uint8_t rslt = EE::Write32(EE_ADDR_DAMAGE, NewDmg);
-    if(rslt == retvOk) {
-        Damage = NewDmg;
+//    uint8_t rslt = EE::Write32(EE_ADDR_DAMAGE, NewDmg);
+//    if(rslt == retvOk) {
+//        Damage = NewDmg;
         return retvOk;
-    }
-    else {
-        Printf("EE error: %u\r", rslt);
-        return retvFail;
-    }
+//    }
+//    else {
+//        Printf("EE error: %u\r", rslt);
+//        return retvFail;
+//    }
 }
-#endif
+//#endif
